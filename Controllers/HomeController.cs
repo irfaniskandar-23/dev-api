@@ -6,15 +6,15 @@ namespace dev_api.Controllers
     [ApiController]
     public class HomeController : ControllerBase
     {
-        private static readonly string[] value = ["/api/student"];
-
         [HttpGet]
         public IActionResult Get()
         {
             return Ok(new
             {
-                message = "Welcome to fun-demo API!",
-                availableEndpoints = value
+                message = "CI/CD is working!",
+                buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER") ?? "local",
+                gitCommit = Environment.GetEnvironmentVariable("GIT_COMMIT") ?? "unknown",
+                timestamp = DateTime.UtcNow
             });
         }
     }
