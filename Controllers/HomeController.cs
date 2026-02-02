@@ -42,7 +42,13 @@ namespace dev_api.Controllers
                 if (System.IO.File.Exists(versionFile))
                 {
                     var json = System.IO.File.ReadAllText(versionFile);
-                    return JsonSerializer.Deserialize<VersionInfo>(json);
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    return JsonSerializer.Deserialize<VersionInfo>(json, options);
                 }
             }
             catch (Exception ex)
