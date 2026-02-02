@@ -11,6 +11,8 @@ namespace dev_api.Controllers
         public IActionResult Get()
         {
             var versionInfo = GetVersionInfo();
+            var baseDir = AppContext.BaseDirectory;
+            var versionFilePath = Path.Combine(baseDir, "version.json");
 
             return Ok(new
             {
@@ -18,7 +20,17 @@ namespace dev_api.Controllers
                 buildNumber = versionInfo?.BuildNumber ?? "local",
                 gitCommit = versionInfo?.GitCommit ?? "unknown",
                 builtAt = versionInfo?.BuiltAt ?? "unknown",
-                timestamp = DateTime.UtcNow
+                timestamp = DateTime.UtcNow,
+                // Debug info:
+                debug = new
+                {
+                    baseDirectory = baseDir,
+                    versionFilePath = versionFilePath,
+                    fileExists = System.IO.File.Exists(versionFilePath),
+                    filesInBaseDir = Directory.Exists(baseDir)
+                        ? Directory.GetFiles(baseDir).Select(f => Path.GetFileName(f)).ToArray()
+                        : new string[] { "directory not found" }
+                }
             });
         }
 
@@ -33,11 +45,10 @@ namespace dev_api.Controllers
                     return JsonSerializer.Deserialize<VersionInfo>(json);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // If file doesn't exist or can't be read, return null
+                Console.WriteLine($"Error reading version file: {ex.Message}");
             }
-
             return null;
         }
     }
