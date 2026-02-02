@@ -18,7 +18,7 @@ namespace dev_api.Controllers
                 .RuleFor(s => s.Email, f => f.Internet.Email())
                 .RuleFor(s => s.DateOfBirth, f => f.Date.Past(25, DateTime.Now.AddYears(-18)))
                 .RuleFor(s => s.Major, f => f.PickRandom("Computer Science", "Mathematics", "Physics", "Chemistry", "Biology", "Engineering", "Business", "Psychology"))
-                .RuleFor(s => s.GPA, f => f.Random.Double(2.0, 4.0));
+                .RuleFor(s => s.GPA, f => Math.Round(f.Random.Double(2.0, 4.0), 2));
 
             var students = studentFaker.Generate(count);
 
