@@ -16,11 +16,25 @@ jobs:
       with:
         dotnet-version: '8.0.x'
     
+    - name: Create version file
+      run: |
+        cat > version.json << EOF
+        {
+          "buildNumber": "${{ github.run_number }}",
+          "gitCommit": "${{ github.sha }}",
+          "builtAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
+        cat version.json
+    
     - name: Build
       run: dotnet build --configuration Release
     
     - name: Publish
       run: dotnet publish -c Release -o ./publish
+    
+    - name: Copy version file to publish folder
+      run: cp version.json ./publish/
     
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
@@ -28,6 +42,3 @@ jobs:
         app-name: 'fun-demo'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: './publish'
-      env:
-        BUILD_NUMBER: ${{ github.run_number }}
-        GIT_COMMIT: ${{ github.sha }}
